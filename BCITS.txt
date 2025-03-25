@@ -1,0 +1,424 @@
+1. create  table  from employee (empId int not null, Name varchar (45) not null, age intnot null, joiningdate` date not null, primary key(empId));
+   
+   alter table form employee` add column salary decimal not null after joiningdate;
+   
+2. drop table TempDate from employee;
+
+3. create table from products (prodictID int, prodictName varchar(50) not null, price decimal not null default > 0, primary key(prodictID));
+
+4. rename OldOrders TO ArchivedOrders;
+
+6. insert into Student (StudentID, Name, Age, Grade) VALUES (101, 'Alice', 20, 'A');
+
+7. update Students set Grade = 'B' where marks = 60;
+
+8. delete from Students where Status = 'Cancelled';
+
+10. load data infile 'c:/mi/employee.csv' into table employee fields terminated by ','  enclosed by '"'  lines terminated by '\n' ignore 1 rows;
+
+11. select EmployeeName from Employees where JoinDate > '2021-01-01';
+
+12. select 
+    avg(Salary) as AverageSalary,
+    min(Salary) as MinimumSalary,
+    max(Salary) as MaximumSalary  from Employees;
+
+	
+13. select * from Orders where OrderAmount > 1000 and Status = 'Delivered';
+
+14. select Category, sum(Quantity) as totalProductSold from Sales group by Category;
+
+15. select c.name,o.orderid, o.orderdate, o.orderamount from customers c inner join orders o o c.customerid = o.customerid;
+
+17. select c.customerid, c.name, o.orderid,o.orderdate,o.orderamount from customers c left join orders o on c.customerid = o.customerid;
+
+18. select * from names where salary > avg(salary) as avgSalary;
+
+19. select * from orders 1 where 1.orderamount > (select avg(2.orderamount) from orders 2 where 2.customerId = 1.customerId);
+
+20. select  c.name, o.orderid,  o.orderdate, p.productid, p.productname, p.price from customers c
+inner join orders o on c.customerid = o.customerid
+inner join products p on o.product_id = p.productid;
+
+21. insert into accounts (accountid, accountname, createddate)values (1001, 'Alice Smith', GETDATE());
+    update transactions set balance = balance + 500 where accountid = 1001;
+    commit transaction;   
+    rollback transaction;
+
+22.  update inventory set quantity = quantity - 10 where productid = 101;
+    update inventory set quantity = quantity + 20 where productid = 102;
+    IF ((select quantity from inventory where productid = 102) > 100) then rollback to SAVEPOINT spafterstep1;
+    update inventory set last_modified = now() where productid in (101, 102);
+
+23. Selects all rows from Employee and locks them for update.
+    
+	select * from Employee for update;
+    commit;
+	
+   At select point, perform any update operations as needed.
+   Other transactions can still run SELECT queries on Employee,
+   but those queries won’t be able to update the locked rows until this transaction is complete.
+
+24. set transaction ISOLATION level SERIALIZABLE; 
+
+    commit;
+
+	Your transactional SQL operations starts to set transaction 
+    For example:
+    update accounts set balance = balance - 100 where accountid = 1;
+    insert into transactions (accountid, amount, txndate) values (1, -100, getDate());
+
+25.  update orders set order_status = 'Processed' where orderid = 100;
+     commit;
+
+	 
+26.  Object-Relational Mapping,	is a programming bridges the gap betwwen the object oriented models used in programming languages
+     and the reationl models used in databases. developers can work direcly with objects. ORM framework automatically maps these objects to
+	 database table vice versa, handale the conversion of data types operations like update, delete,retrive. this can be seepds this development
+     and reduce the lines of code	 
+	 
+	 Architecture of Hibernate ORM : Hibernate is one of the most popular ORM frameworks for Java.
+	 Its architecture is organized into several layers they are.
+	 1.Configuration and Mapping
+     2.SessionFactory
+     3. Transaction Management
+	 
+27. components of JPA :Java Persistence API for managing relational data in Java applications. 
+    It defines a set of components
+	
+	1.Persistence Unit : its a until of logical grouping of all the entity classess maneged by EntityManager in the application.
+	2.Entity Manager Factory : its a thread safe object created once for a given persitance unit. it acts as factory for EntityManager
+	3.Entity Manager  : its a primary interface used by application to interact with persistance context. it manages interactions with the database crud oprations 
+	4.Persistence Context : its a set of managed entity instances that exist at any given point. it exist with EntityManager
+	5.Entity Classes : it isa class we are using Entity class for storing table name and column name for database.
+	6.Transaction Management : Api support for managing transaction using EntityTransaction in java 
+
+28. @Entity : When class have @Entity it signals the hibernate that should be mapped to a table in the database.
+    @OneToOne : it relationshio between the two entityes.
+	@OneToMany : it represents the one to many relationship.
+	@ManyToOne : it represents the many to one relationship.
+	EntityTransaction : Api support for managing transaction using EntityTransaction in java 
+	
+29. JPQL : Java Persistence Query Language, is an object-oriented query language designed for the
+    Java Persistence API (JPA). Unlike SQL—which queries directly against database tables and 
+	columns—JPQL allows you to query over your entity objects and their relationships.	
+	
+30. String jpql = "select min(p.price) from Product p";
+    TypedQuery<Double> query = entityManager.createQuery(jpql, Double.class);
+    Double minPrice = query.getSingleResult();
+     System.out.println("Minimum product price: " + minPrice);
+	 
+31. EntityManagerFactory emf = Persistence.createEntityManagerFactory("Product");
+    // this "Product" located to persitance.xml
+	EntityManager em = emf.createEntityManager();
+	try {
+         EntityTransaction transaction = em.getTransaction();
+         transaction.begin();
+         Product product = new Product();
+         product.setName("Sample Product");
+         product.setPrice(19.99);
+         em.persist(product);
+         transaction.commit();
+       } catch(Exception e) {
+           System.out.println(e.getMessage());
+		   if (em.getTransaction().isActive()) {
+               em.getTransaction().rollback();
+            }
+        } finally {
+            em.close();
+            emf.close();
+        }
+    }
+
+32. 1.Load the JDBC Driver: load thi Drive 
+	       ex: Class.forName("com.mysql.cj.jdbc.Driver");
+		2. Establish a Database Connection:    
+		   String url = "jdbc:mysql://localhost:3306/form";
+           String username = "root";
+           String password = "root";
+           Connection connection = DriverManager.getConnection(url, username, password);
+		3. Create a Statement or PreparedStatement:   
+		   Statement statement = connection.createStatement();
+		4. Execute SQL Queries or Updates: 
+           String sql = "SELECT * FROM employees";
+           ResultSet resultSet = statement.executeQuery(sql);		
+	    5. Process the ResultSet: 
+		   while (resultSet.next()) {
+                int employeeId = resultSet.getInt("employeeid");
+                String firstName = resultSet.getString("firstname");
+                String lastName = resultSet.getString("lastname");
+                System.out.println("Employee ID: " + employeeId + ", Name: " + firstName + " " + lastName);
+            }
+		6.Close Resources:
+		     if(resultSet != null) {
+			 resultSet.close();
+			 }
+             if(statement != null) {
+			 statement.close();
+			 }
+             if(connection != null) {
+			 connection.close();
+			 }
+			 
+			
+33.		Polymorphism : Polymorphism is the ability of object to take on many form. 
+              method overloading : it is also called as compile time polymorphism, multiple methods with the same name but
+			                       different parameters  its called as method overloading.
+			  method Overriding : it is also called as run time polymorphism,child class and parent class have asame method name
+			                     and same paramethers it is a method overriding. ad child class having a annotation also
+	    							 
+        Encapsulation :  Encapsulation is a concept of hidding data from othe class.  It hides the internal data of an object 
+			 from the outside class. using Access specifires they are. private, protected, public, default 
+			 
+        Inheritance	: when child class accupy the all data from super class this concept called Inheritance	.
+                *Single Inheritance : one super class have one child.
+                *Multi level Inheritance : one super class have sevaral child class.
+                *Hirarchical Inheritance : one class extents by another one class. that class extents by another class.
+                 
+        Abstraction :  hiding the complex reality while exposing only the necessary parts.	it create a
+                        abstract class and interface that represent more implementations
+        throw : Used within a method to explicitly throw an exception
+		throws :Used in a method's signature to declare that the method might throw one or more exceptions. 	
+
+34. 	equals() : 	it compare the  contents or logical equivalence of objects.
+        == : Compares the references  of two objects.
+		
+		final : A keyword used to restrict the user.
+		finally :A block used in exception handling that is guaranteed to execute regardless of whether an exception is thrown  
+		finalize : A method defined in  that is called by the garbage collector before an object is reclaimed.
+		
+		implements : Used by a class to implement one  interfaces to anothe class.
+		extends : Used for inheritance when a class derives from another class.
+		
+		Checked Exceptions: checked at compile time. Methods that throw checked exceptions must declare
+		Unchecked Exceptions: runtime exceptions. Not checked at compile time these are typically programming errors.
+		
+		Methods : A block of code within a class that performs a specific task.Methods have a return type
+		Constructor :A special block of code that is called when an instance of a class is created. it is a special method, when we 
+                     write the object of class default constructrs will be created. it does not have the return type.
+
+35. Compile Time Error The Java compiler expects a boolean expression.
+
+36. a=0;
+    b=0.0f;
+	
+37. Hello from Outer
+    Hello from Outer
+38. true
+
+39. Java Programming
+
+40. true
+
+41.2 4 	
+	
+42.	(100, 2, 3)
+					 
+45. yes
+
+47. It will lead to conflict and spring will throw an exception.
+
+48. 
+
+public class ListSetConversion {
+    public static void main(String[] args) {
+       
+        List<String> list = new ArrayList<>();
+        list.add("apple");
+        list.add("banana");
+        list.add("apple");   
+        list.add("orange");
+        list.add("grape");
+        list.add("banana");  
+        
+        System.out.println("Original List: " + list);
+        
+        
+        Set<String> hashSet = new HashSet<>(list);
+        System.out.println("Converted to HashSet: " + hashSet);
+        
+        
+        Set<String> linkedHashSet = new LinkedHashSet<>(list);
+        System.out.println("Converted to LinkedHashSet (order preserved): " + linkedHashSet);
+        
+       
+       
+        List<String> listFromHashSet = new ArrayList<>(hashSet);
+        System.out.println("Converted from HashSet to List: " + listFromHashSet);
+        
+       
+        List<String> listFromLinkedHashSet = new ArrayList<>(linkedHashSet);
+        System.out.println("Converted from LinkedHashSet to List: " + listFromLinkedHashSet);
+    }
+}
+
+50. public class PatternPrinting {
+    public static void main(String[] args) {
+        int n = 5;  
+        for (int i = 1; i <= n; i++) {
+           
+            for (int j = 1; j <= i; j++) {
+                System.out.print(j);
+            }
+           
+            System.out.println();
+        }
+        
+       
+        for (int i = n - 1; i >= 1; i--) {
+            
+            for (int j = 1; j <= i; j++) {
+                System.out.print(j);
+            }
+           
+            System.out.println();
+        }
+    }
+}
+
+51. public class SubstringFinder {
+    public static void main(String[] args) {
+        String input = "abc";
+        System.out.println("Input string: " + input);
+        System.out.println("Substrings:");
+        
+        
+        for (int i = 0; i < input.length(); i++) {
+            for (int j = i + 1; j <= input.length(); j++) {
+                System.out.println(input.substring(i, j));
+            }
+        }
+    }
+}
+
+52 import java.util.*;
+
+    public class TreeMapExample {
+    public static void main(String[] args) {
+        TreeMap<Integer, String> treeMap = new TreeMap<>();
+        treeMap.put(1, "Apple");
+        treeMap.put(3, "Banana");
+        treeMap.put(5, "Cherry");
+        treeMap.put(7, "Date");
+        treeMap.put(9, "Elderberry");
+
+        Map.Entry<Integer, String> firstEntry = treeMap.firstEntry();
+        System.out.println("First Entry: " + firstEntry);
+
+        Map.Entry<Integer, String> lastEntry = treeMap.lastEntry();
+        System.out.println("Last Entry: " + lastEntry);
+    }
+}
+
+
+
+54. what is dispatcher servlet?
+The DispatcherServlet is a core component of the Spring Framework in Java. 
+It acts as the front controller in a Spring MVC web application.Its primary role is to handle incoming
+HTTP requests and dispatch them to the appropriate handlers, such as controllers, views, or other components.
+
+56)Explain the below:
+a.@Configuration:The @Configuration annotation in Spring is used to mark a class as a source of Spring Bean definitions.
+b.@Bean:The @Bean annotation is used within a @Configuration class to define and register a bean in the Spring application context. These beans are managed by Spring, and their lifecycle is handled by the framework.
+c.Dependency Injection:Dependency Injection is a design pattern where an object receives its dependencies from an external source (rather than creating them itself). In Spring, the framework automatically injects the required dependencies 
+into components, promoting loose coupling and better testability. 
+DI can be achieved through constructor injection, setter injection, or field injection.
+d.IOC:IoC is a principle that shifts control of object creation and management from the 
+application code to the framework. In Spring, the IoC container manages the lifecycle of beans, 
+resolves dependencies, and ensures that objects are available to the application when needed.
+ IoC is the foundation on which Spring is built, and it enables Dependency Injection.
+ 
+57. 
+public class PrintNumbers {
+    public static void printNumbers(int n) {
+        if (n > 100) { 
+            return;
+        }
+        System.out.println(n);
+        printNumbers(n + 1); 
+    }
+
+    public static void main(String[] args) {
+        printNumbers(1); 
+    }
+}
+
+58. <!DOCTYPE html>
+<html>
+<head>
+    <title>Toggle Div Visibility</title>
+    <style>
+        #myDiv {
+            width: 200px;
+            height: 100px;
+            background-color: lightblue;
+            display: block; 
+            text-align: center;
+            line-height: 100px;
+        }
+    </style>
+    <script>
+        function toggleVisibility() {
+            const div = document.getElementById('myDiv');
+            if (div.style.display === 'none') {
+                div.style.display = 'block';
+            } else {
+                div.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+<body>
+    <button onclick="toggleVisibility()">Toggle Visibility</button>
+    <div id="myDiv">Hello! I'm a Div</div>
+</body>
+</html>
+
+
+59. write a JSP page that iterates over a list of names using JSTL.
+
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Iterate Over Names</title>
+</head>
+<body>
+    <h1>Names List</h1>
+    <ul>
+       
+        <c:forEach var="name" items="${names}">
+            <li>${name}</li>
+        </c:forEach>
+    </ul>
+</body>
+</html>
+
+List<String> names = Arrays.asList("Alice", "Bob", "Charlie", "Diana");
+request.setAttribute("names", names);
+request.getRequestDispatcher("names.jsp").forward(request, response);
+
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>jstl</artifactId>
+    <version>1.2</version>
+</dependency>
+
+60.
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Change Background Color</title>
+    <script>
+        function changeBackgroundColor(color) {
+            document.body.style.backgroundColor = color;
+        }
+    </script>
+</head>
+<body>
+    <button onclick="changeBackgroundColor('lightblue')">Light Blue</button>
+    <button onclick="changeBackgroundColor('lightgreen')">Light Green</button>
+    <button onclick="changeBackgroundColor('lightcoral')">Light Coral</button>
+</body>
+</html>
